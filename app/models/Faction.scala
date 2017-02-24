@@ -34,21 +34,4 @@ object Faction {
 }
 
 
-class FactionRepo {
-
-
-
-  def getFactions () (implicit ec : ExecutionContext) : Future[List[Faction]] = {
-    val data : List[Faction] = List(
-      Faction("1", "Gondor", None, List.empty, List.empty, Some(Nation.HUMANS))
-
-    )
-
-    Future(data)
-  }
-
-
-
-
-}
 

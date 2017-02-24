@@ -1,6 +1,7 @@
 package models
 
 import play.api.libs.json.{Json, Reads, Writes}
+import sangria.schema.{EnumType, EnumValue, Field, ListType, ObjectType, OptionType, StringType, fields}
 import utils.JsonUtils
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,34 +29,31 @@ case class Hero (
 object Hero {
   implicit val reads = Json.reads[Hero]
   implicit val writes = Json.writes[Hero]
-}
 
-
-
-class HeroRepo {
-
-  val heroes : List[Hero] = List(
-    Hero("1", Some("Aragorn"),Some(Side.GOOD), List.empty),
-    Hero("2", Some("Legolas"), Some(Side.GOOD), List.empty),
-    Hero("3", Some("Gimli"),  Some(Side.GOOD), List.empty),
-    Hero("4", Some("Gandalf"),Some(Side.GOOD), List.empty),
-    Hero("5", Some("Frodon"), Some(Side.GOOD), List.empty),
-    Hero("6", Some("Sam"),  Some(Side.GOOD), List.empty),
-    Hero("7", Some("Merry"), Some(Side.GOOD), List.empty),
-    Hero("8", Some("Pippin"), Some(Side.GOOD), List.empty),
-    Hero("9", Some("Boromir"), Some(Side.GOOD), List.empty)
+  val SideEnum = EnumType(
+    "Side",
+    Some("Different sides"),
+    List(
+      EnumValue("GOOD", value = Side.GOOD, description = Some("Good heroes")),
+      EnumValue("NEUTRAL", value = Side.NEUTRAL, description = Some("Neutral heroes")),
+      EnumValue("BAD", value = Side.BAD, description = Some("Bad heroes")))
   )
 
-  def getHeroes () (implicit ec : ExecutionContext): Future[List[Hero]] = {
-    Future(heroes)
-  }
 
-  def getHeroByID (id : String) (implicit ec : ExecutionContext) : Future[Option[Hero]] = {
-    Future(heroes.find(hero => hero.id equals id))
-  }
-
-  def getHeroByName (name : String) (implicit ec : ExecutionContext) : Future[Option[Hero]] = {
-    Future(heroes.find(hero => hero.name.getOrElse("") equals name))
-  }
+  val HeroType = ObjectType (
+    "Hero",
+    "The hero",
+    fields[Unit, Hero] (
+      Field("id", StringType, resolve = _.value.id),
+      Field("name", OptionType(StringType), resolve = _.value.name),
+      Field("side", OptionType(SideEnum), resolve = _.value.side),
+      Field("friends", ListType(StringType), resolve = _.value.friends.map(elem => elem.name.getOrElse("")))
+    )
+  )
 
 }
+
+
+
+
+

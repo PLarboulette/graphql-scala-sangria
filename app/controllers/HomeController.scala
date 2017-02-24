@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import database.HeroRepo
 import models.{Hero, HeroRepo, SchemaDefinition}
 import play.api._
 import play.api.libs.json.Json
