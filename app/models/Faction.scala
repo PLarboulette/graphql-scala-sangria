@@ -23,9 +23,9 @@ object Nation extends Enumeration {
 case class Faction (
                    id : String,
                   name : String,
-                  chief : Option[Hero],
-                  allies : List[Faction],
-                  enemies : List[Faction],
+                  chief : Option[String],
+                  allies : List[String],
+                  enemies : List[String],
                   nation : Option[Nation.Value]
                 )
 object Faction {

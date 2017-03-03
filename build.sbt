@@ -12,6 +12,9 @@ libraryDependencies ++= Seq(
   ws,
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "org.sangria-graphql" %% "sangria-relay" % "1.0.0",
-  "org.sangria-graphql" %% "sangria-play-json" % "1.0.0"
+  "org.sangria-graphql" %% "sangria-play-json" % "1.0.0",
+  "org.sangria-graphql" %% "sangria-circe" % "1.0.0",
+  "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1",
+  "io.reactivex" %% "rxscala" % "0.26.5"
 )
 

@@ -3,14 +3,21 @@ package controllers
 import javax.inject._
 
 import database.HeroRepo
-import models.{Hero, HeroRepo, SchemaDefinition}
-import play.api._
-import play.api.libs.json.Json
+import models.SchemaDefinition
+import org.mongodb.scala.{Completed, Observer}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc._
-import sangria.execution.Executor
+import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.macros._
 
 import scala.concurrent.{ExecutionContext, Future}
+import sangria.marshalling.playJson._
+import sangria.ast.Document
+import sangria.parser.{QueryParser, SyntaxError}
+import sangria.schema.Schema
+import utils.{GraphQLHelper}
+
+import scala.util.{Failure, Success}
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -29,35 +36,18 @@ class HomeController @Inject() (implicit ec : ExecutionContext) extends Controll
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def ok: Action[AnyContent] = Action.async {
+  def ok = Action.async (parse.json) {
 
+     /*{
+    "query" : "query Query($id : String!) {hero (id : $id) {id, name, side, friends}}",
+    "variables" : {"id" : "2"}
+    }*/
 
-    val query =
-      graphql"""
-    query Test {
-      hero(id: "2") {
-        name
+    request ⇒
+      GraphQLHelper.parseAndLaunchQuery(request).map {
+        case Success(result) => Ok(result)
+        case Failure(error) => BadRequest(Json.obj("error" -> error.getMessage ))
       }
-
-    }
-  """
-
-    val ok = Executor.execute(SchemaDefinition.schema, query, new HeroRepo)
-    ok.map {
-      elem => println(elem)
-    }
-
-    println("okokokokkoko")
-
-    Future(Ok("ok"))
-  /* Hero.getByName("Aragorn").map {
-     case Some(hero) => Ok(Json.toJson(hero))
-     case None => Ok(Json.obj())
-   } recover  {
-     case e : Exception =>
-       Ok(Json.obj("Exception" -> e.getMessage))
-   }*/
   }
-
 }
 

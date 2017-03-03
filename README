@@ -1,0 +1,11 @@
+
+
+{
+	"query" : "mutation Mutation($id : String!, $name : String!, $side : String, $friends : [String!]!) {updateHero (id : $id, name : $name, side : $side, friends : $friends) {id, name, side, friends}}",
+	"variables" : {"id" : "1", "name" : "Saroumane", "side" : "BAD", "friends" : ["Sauron", "Le Roi Sorcier"]}
+}
+
+{
+	"query" : "query Hero {getHeroes {id, name, side, friends}}"
+}
+
