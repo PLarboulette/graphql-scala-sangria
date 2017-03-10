@@ -1,6 +1,5 @@
 package utils
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 
 import scala.collection.immutable.ListMap
@@ -69,7 +68,6 @@ object JsonUtils {
   def map(array: JsArray, f: JsValue => JsValue): JsValue = {
     Json.toJson(array.as[List[JsValue]].map(f))
   }
-
 
   def enumReads[E <: Enumeration](enum: E): Reads[E#Value] = new Reads[E#Value] {
     def reads(json: JsValue): JsResult[E#Value] = json match {

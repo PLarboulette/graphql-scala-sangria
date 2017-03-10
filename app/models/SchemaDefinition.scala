@@ -1,18 +1,12 @@
 package models
-import database.{FactionRepo, GlobalRepo, HeroRepo}
+import database.GlobalRepo
 import sangria.schema.{Field, _}
-import sangria.macros._
-import sangria.relay._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by Pierre Larboulette on 23/02/2017.
   */
 object SchemaDefinition {
-
-
-
 
 
   val globalQuery = ObjectType("Query",
@@ -22,7 +16,7 @@ object SchemaDefinition {
       ),
       Field(
         "getHeroByID", OptionType(Hero.HeroType), description = Some("Return one hero thanks to its id"),
-        arguments = Hero.Id :: Nil, resolve = c => c.ctx.getHeroByID(c arg Hero.Id)
+        arguments = Hero.id :: Nil, resolve = c => c.ctx.getHeroByID(c arg Hero.id)
       ),
       Field(
         "getHeroByName", OptionType(Hero.HeroType), description = Some("Return one hero thanks to its id"),
@@ -31,23 +25,27 @@ object SchemaDefinition {
     )
   )
 
-  val globalMutation = ObjectType("Mutation", fields[GlobalRepo, Unit](
-    Field("createHero", OptionType(Hero.HeroType),
-      arguments = Hero.name :: Hero.side :: Hero.friends :: Nil,
-      resolve = ctx => ctx.ctx.createHero(ctx.arg(Hero.name.name), ctx.arg(Hero.side.name), ctx.arg(Hero.friends.name))
-    ),
-    Field("updateHero", OptionType(Hero.HeroType),
-      arguments = Hero.Id :: Hero.name :: Hero.side :: Hero.friends :: Nil,
-      resolve = ctx => ctx.ctx.updateHero(ctx.arg(Hero.Id.name), ctx.arg(Hero.name.name), ctx.arg(Hero.side.name), ctx.arg(Hero.friends.name))
+  val globalMutation = ObjectType("Mutation",
+    fields[GlobalRepo, Unit](
+      Field("createHeroes", ListType(Hero.HeroType), arguments = Nil,
+        resolve = ctx => ctx.ctx.createHeroes(test = false)
+      ),
+      Field("createHero", OptionType(Hero.HeroType), arguments = Hero.name :: Hero.side :: Hero.friends :: Nil,
+        resolve = ctx => ctx.ctx.createHero(ctx.arg(Hero.name.name), ctx.arg(Hero.side.name), ctx.arg(Hero.friends.name))
+      ),
+      Field("updateHeroName", OptionType(Hero.HeroType), arguments = Hero.id :: Hero.name :: Nil,
+        resolve = ctx => ctx.ctx.updateHeroName(ctx.arg(Hero.id.name), ctx.arg(Hero.name.name))
+      ),
+      Field("deleteHeroByID", BooleanType, arguments = Hero.id :: Nil,
+        resolve = ctx => ctx.ctx.deleteHeroByID(ctx.arg(Hero.id.name))
+      ),
+      Field("deleteHeroes", BooleanType, arguments = Nil,
+        resolve = ctx => ctx.ctx.deleteHeroes(test = false)
+      )
     )
-
   )
-  )
-
-
 
   val schema = Schema(globalQuery, Some(globalMutation))
-
 }
 
 

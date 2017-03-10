@@ -1,15 +1,11 @@
 package utils
 
-
 import org.mongodb.scala.{Completed, Observable, Observer}
-
-import scala.concurrent.{Future, Promise}
 
 /**
   * Created by Pierre Larboulette on 28/02/2017.
   */
 object MongoHelper {
-
 
   def wrapperSubscribe(observable : Observable[Completed]) : Observable[Completed] = {
     observable.subscribe(new Observer[Completed] {
@@ -19,6 +15,4 @@ object MongoHelper {
     })
     observable
   }
-
-
 }

@@ -1,8 +1,7 @@
 package database
 
-import java.util.UUID
 
-import models.{Hero, Side}
+import models.Hero
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,24 +10,39 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class GlobalRepo {
 
+  val heroRepo = new HeroRepo()
+
   def getHeroes ()(implicit ec : ExecutionContext): Future[List[Hero]] = {
-    new HeroRepo().getHeroes()
+    heroRepo.getHeroes()
   }
 
   def getHeroByID(id : String)(implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    new HeroRepo().getHeroByID(id)
+    heroRepo.getHeroByID(id)
   }
 
   def getHeroByName(name : String)(implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    new HeroRepo().getHeroByName(name)
+    heroRepo.getHeroByName(name)
   }
 
-  def createHero (name : String, side : String, friends : Vector[String]) (implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    new HeroRepo().addHero(name, side, friends)
+  def createHero (name : String, side : Int, friends : Option[Vector[String]]) (implicit ec:ExecutionContext): Future[Option[Hero]] = {
+    heroRepo.createHero(name, side, friends)
   }
 
-  def updateHero (id : String, name : String, side : String, friends : Vector[String])(implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    new HeroRepo().updateHero(id, name, side, friends)
+  def createHeroes (test : Boolean) (implicit ec:ExecutionContext): Future[List[Hero]] = {
+    heroRepo.createHeroes(test)
+  }
+
+  def updateHeroName (id : String, name : String) (implicit ec:ExecutionContext): Future[Option[Hero]] = {
+    heroRepo.updateHeroName(id, name)
+  }
+
+  def deleteHeroByID (id : String)  (implicit ec:ExecutionContext): Future[Boolean] = {
+    heroRepo.deleteHeroByID(id)
+  }
+
+  def deleteHeroes (test : Boolean)(implicit ec:ExecutionContext): Future[Boolean] = {
+    heroRepo.deleteHeroes(test)
+    Future(false)
   }
 
 }

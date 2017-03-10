@@ -6,7 +6,6 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Request
 import sangria.ast.Document
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 import sangria.marshalling.playJson._
@@ -20,12 +19,21 @@ object GraphQLHelper {
 
   def executeGraphQLQuery(query: Document, op: Option[String], vars: JsObject)(implicit ec: ExecutionContext): Future[Try[JsValue]] = {
 
-    Executor.execute(SchemaDefinition.schema, query, new GlobalRepo, operationName = op, variables = vars)
-      .map { elem =>Success(elem)
-      }.recover {
-      case error: QueryAnalysisError ⇒ Failure(new Exception(error))
-      case error: ErrorWithResolver ⇒ Failure(new Exception(error))
+    try {
+      Executor.execute(SchemaDefinition.schema, query, new GlobalRepo, operationName = op, variables = vars)
+        .map { elem => Success(elem)
+        }.recover {
+        case error: QueryAnalysisError ⇒
+          Failure(new Exception(error))
+        case error: ErrorWithResolver ⇒
+          Failure(new Exception(error))
+      }
+    } catch {
+      case e : Exception =>
+        println(e.getMessage)
+        Future.successful(Failure(e))
     }
+
   }
 
   def parseAndLaunchQuery(request : Request[JsValue]) (implicit ec : ExecutionContext) : Future[Try[JsValue]] = {
@@ -35,6 +43,7 @@ object GraphQLHelper {
       case obj: JsObject ⇒ obj
       case _ ⇒ Json.obj()
     }
+
     QueryParser.parse(query) match {
       case Success(queryAst) ⇒
         GraphQLHelper.executeGraphQLQuery(queryAst, operation, variables.getOrElse(Json.obj()))
