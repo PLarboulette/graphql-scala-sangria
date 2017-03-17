@@ -2,7 +2,7 @@
 
 // getHeroes
 {
-	"query" : "query Hero {getHeroes {id, name, side, friends}}"
+	"query" : "query Hero {getHeroes {id, name, side, friends{id}}}"
 }
 
 // getHeroByID

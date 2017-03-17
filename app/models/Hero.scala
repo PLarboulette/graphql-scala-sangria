@@ -1,10 +1,12 @@
 package models
 
+import database.HeroRepo
 import play.api.libs.json.{Json, Reads, Writes}
-import sangria.schema.{Argument, EnumType, EnumValue, Field, InputField, InputObjectType, ListInputType, ListType, ObjectType, OptionInputType, OptionType, StringType, fields}
+import sangria.schema.{Argument, EnumType, EnumValue, Field, InputField, InputObjectType, InterfaceType, ListInputType, ListType, ObjectType, OptionInputType, OptionType, StringType, fields}
 import utils.JsonUtils
 import sangria.marshalling.{CoercedScalaResultMarshaller, FromInput}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by Pierre Larboulette on 23/02/2017.
@@ -17,12 +19,22 @@ object Side extends Enumeration {
   implicit val writes:Writes[Side] = JsonUtils.enumWrites
 }
 
-case class Hero (id : String, name : String, side : Option[Side.Value], friends : List[String])
+trait Test {
+  def id : String
+}
+
+case class Hero (
+                  id : String,
+                  name : String,
+                  side : Option[Side.Value],
+                  friends : List[String]) extends Test
 
 object Hero {
 
   implicit val reads = Json.reads[Hero]
   implicit val writes = Json.writes[Hero]
+
+  val heroRepo = new HeroRepo()
 
   val SideEnum = EnumType(
     "Side",
@@ -38,18 +50,33 @@ object Hero {
   val side = Argument("side", StringType)
   val friends = Argument("friends", ListInputType(StringType))
 
-  val key = Argument("key", StringType)
 
-  val HeroType = ObjectType (
+
+  val Character: InterfaceType[Unit, Test] =
+    InterfaceType(
+      "Character",
+      "A character in the Star Wars Trilogy",
+      () => fields[Unit, Test](
+        Field("id", StringType,
+          Some("The id of the character."),
+          resolve = _.value.id)
+      ))
+
+   val HeroType : ObjectType[Unit, Hero] = ObjectType (
     "Hero",
     "The hero",
     fields[Unit, Hero] (
       Field("id", StringType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
       Field("side", OptionType(SideEnum), resolve = _.value.side),
-      Field("friends", ListType(StringType), resolve = _.value.friends)
+      Field("friends", ListType(Character),
+        resolve = ctx => heroRepo.convertListIdToListHero(ctx.value.friends)
+      )
     )
   )
+
+
+
 
   implicit val HeroFormat = Json.format[Hero]
 
@@ -73,14 +100,10 @@ object Hero {
     InputField("friends", ListInputType(StringType))
   ))
 
-
-
-
   val argHeroInputType = Argument("HeroInput", HeroInputType)
 
-
-
   def convertStringToSide (sideString : Int) : Option[Side.Value] = {
+
     sideString match {
       case 0 => Some(Side.GOOD)
       case 1 => Some(Side.NEUTRAL)
@@ -88,4 +111,5 @@ object Hero {
       case _ => None
     }
   }
+
 }

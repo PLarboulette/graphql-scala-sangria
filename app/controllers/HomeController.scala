@@ -33,13 +33,15 @@ class HomeController @Inject() (implicit ec : ExecutionContext) extends Controll
    * a path of `/`.
    */
   def index = Action {
+
+
     Ok(views.html.index("Your new application is ready."))
   }
 
   def ok = Action.async (parse.json) {
 
      /*{
-    "query" : "query Query($id : String!) {hero (id : $id) {id, name, side, friends}}",
+    "query" : "query Query($id : String!) t{hero (id : $id) {id, name, side, friends}}",
     "variables" : {"id" : "2"}
     }*/
 
@@ -49,5 +51,7 @@ class HomeController @Inject() (implicit ec : ExecutionContext) extends Controll
         case Failure(error) => BadRequest(Json.obj("error" -> error.getMessage ))
       }
   }
+
+
 }
 

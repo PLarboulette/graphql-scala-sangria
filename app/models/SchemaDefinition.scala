@@ -1,7 +1,9 @@
 package models
 import database.GlobalRepo
-import sangria.schema.{Field, _}
+import sangria.schema.{BooleanType, Field, _}
 import scala.concurrent.ExecutionContext.Implicits.global
+
+
 
 /**
   * Created by Pierre Larboulette on 23/02/2017.
@@ -45,7 +47,7 @@ object SchemaDefinition {
     )
   )
 
-  val schema = Schema(globalQuery, Some(globalMutation))
+   val schema = Schema(globalQuery, Some(globalMutation))
 }
 
 

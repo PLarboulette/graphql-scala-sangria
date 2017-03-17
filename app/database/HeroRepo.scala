@@ -27,7 +27,8 @@ class HeroRepo  {
     ("Phoenix",  Some(Side.GOOD),List.empty),
     ("Nightcrawler", Some(Side.GOOD), List.empty),
     ("Wolverine", Some(Side.GOOD), List.empty),
-    ("Storm", Some(Side.GOOD), List.empty)
+    ("Storm", Some(Side.GOOD), List.empty),
+    ("33333", Some(Side.GOOD), List("09508a52-508c-4ffb-b89d-fdc30a6af26b", "41c344b8-f6c4-491a-9d66-a0404b497502"))
   )
 
   //  Utils
@@ -91,6 +92,21 @@ class HeroRepo  {
     collection.find(equal("name", name)).toFuture().recoverWith {
       case e: Throwable => Future.failed(e)
     }.map(_.headOption.flatMap(convertDocumentToHero))
+  }
+
+  def convertListIdToListHero( ids : List[String]) (implicit ec:ExecutionContext) : Future[List[Hero]] = {
+
+    if (ids nonEmpty) {
+
+    } else {
+
+    }
+
+    for {
+        hero <- if (ids.nonEmpty) Future.sequence(ids.map(getHeroByID)).filter(_.head.nonEmpty).map(_.map(_.get)) else Future.successful(List.empty)
+      } yield {
+        hero
+      }
   }
 
   // -------------------------------------------------------------------------------------------------------------- //
