@@ -1,4 +1,4 @@
-name := "play-scala"
+name := "graphql-scala-sangria"
 
 version := "1.0-SNAPSHOT"
 

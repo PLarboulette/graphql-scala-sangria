@@ -1,0 +1,31 @@
+
+[
+  {
+    "query" : "query Hero {getHeroes {id, name, side, friends{id}}}"
+  },
+  {
+    "query" : "query Hero($id : String!) {getHeroByID (id : $id) {id, name, side, friends}}",
+    "variables" : {
+      "id" : "3"
+    }
+  },
+  {
+    "query" : "mutation Mutation($id : String!) {deleteHero (id : $id)}",
+    "variables" : {
+      "id" : "3"
+    }
+  },
+  {
+    "query" : "mutation Mutation {deleteHeroes}"
+  },
+  {
+    "query" : "mutation Mutation($id : String!, $name : String!) {updateHeroName (id : $id, name : $name) {id, name, side, friends}}",
+    "variables" : {
+      "id" : "3504",
+      "name" : "Scott Summers"
+    }
+  },
+  {
+    "query" : "mutation Mutation {createHeroes {id, name, side, friends}}"
+  }
+]
