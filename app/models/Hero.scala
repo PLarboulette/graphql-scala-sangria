@@ -2,9 +2,9 @@ package models
 
 import database.HeroRepo
 import play.api.libs.json.{Json, Reads, Writes}
-import sangria.schema.{Argument, EnumType, EnumValue, Field, InputField, InputObjectType, InterfaceType, ListInputType, ListType, ObjectType, OptionInputType, OptionType, StringType, fields}
-import utils.JsonUtils
 import sangria.marshalling.{CoercedScalaResultMarshaller, FromInput}
+import sangria.schema.{Argument, EnumType, EnumValue, Field, InputField, InputObjectType, InterfaceType, ListInputType, ListType, ObjectType, OptionType, StringType, fields}
+import utils.JsonUtils
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -34,7 +34,6 @@ object Hero {
   implicit val reads = Json.reads[Hero]
   implicit val writes = Json.writes[Hero]
 
-  val heroRepo = new HeroRepo()
 
   val SideEnum = EnumType(
     "Side",
@@ -70,7 +69,7 @@ object Hero {
       Field("name", StringType, resolve = _.value.name),
       Field("side", OptionType(SideEnum), resolve = _.value.side),
       Field("friends", ListType(Character),
-        resolve = ctx => heroRepo.convertListIdToListHero(ctx.value.friends)
+        resolve = ctx => HeroRepo.convertListIdToListHero(ctx.value.friends)
       )
     )
   )

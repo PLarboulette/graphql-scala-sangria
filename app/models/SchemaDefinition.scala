@@ -3,13 +3,11 @@ import database.GlobalRepo
 import sangria.schema.{BooleanType, Field, _}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
-
 /**
   * Created by Pierre Larboulette on 23/02/2017.
   */
-object SchemaDefinition {
 
+object SchemaDefinition {
 
   val globalQuery = ObjectType("Query",
     fields[GlobalRepo, Unit](
@@ -21,7 +19,7 @@ object SchemaDefinition {
         arguments = Hero.id :: Nil, resolve = c => c.ctx.getHeroByID(c arg Hero.id)
       ),
       Field(
-        "getHeroByName", OptionType(Hero.HeroType), description = Some("Return one hero thanks to its id"),
+        "getHeroByName", OptionType(Hero.HeroType), description = Some("Return one hero thanks to its name"),
         arguments = Hero.name :: Nil, resolve = c => c.ctx.getHeroByName(c arg Hero.name.name)
       )
     )

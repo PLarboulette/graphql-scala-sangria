@@ -1,13 +1,12 @@
 package models
 
-import play.api.libs.json.{Json, Reads, Writes}
-import sangria.schema.{Argument, EnumType, EnumValue, Field, InputField, InputObjectType, ListInputType, ListType, ObjectType, OptionType, StringType, fields}
-import utils.JsonUtils
-import Hero.HeroType
 import database.HeroRepo
-import sangria.marshalling.{CoercedScalaResultMarshaller, FromInput}
+import models.Hero.HeroType
+import play.api.libs.json.{Json, Reads, Writes}
+import sangria.schema.{EnumType, EnumValue, Field, ListType, ObjectType, OptionType, StringType, fields}
+import utils.JsonUtils
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 /**
   * Created by Pierre Larboulette on 23/02/2017.
@@ -36,7 +35,6 @@ object Team {
   implicit val reads:Reads[Team] = Json.reads[Team]
   implicit val writes:Writes[Team] = Json.writes[Team]
 
-  val heroRepo = new HeroRepo()
 
   val TeamsEnum = EnumType(
     "Teams",
@@ -60,16 +58,16 @@ object Team {
         resolve = _.value.name
       ),
       Field("chief", OptionType(HeroType),
-        resolve =  ctx => heroRepo.getHeroByID(ctx.value.chief.getOrElse(""))
+        resolve =  ctx => HeroRepo.getHeroByID(ctx.value.chief.getOrElse(""))
       ),
       Field("members", ListType(HeroType),
-        resolve = ctx => heroRepo.convertListIdToListHero(ctx.value.members)
+        resolve = ctx => HeroRepo.convertListIdToListHero(ctx.value.members)
       ),
       Field("allies", ListType(HeroType),
-        resolve = ctx => heroRepo.convertListIdToListHero(ctx.value.allies)
+        resolve = ctx => HeroRepo.convertListIdToListHero(ctx.value.allies)
       ),
       Field("enemies", ListType(HeroType),
-        resolve = ctx => heroRepo.convertListIdToListHero(ctx.value.enemies)
+        resolve = ctx => HeroRepo.convertListIdToListHero(ctx.value.enemies)
       )
     )
   )
@@ -126,8 +124,6 @@ object Team {
       case _ => None
     }
   }
-
-
 
 
 
