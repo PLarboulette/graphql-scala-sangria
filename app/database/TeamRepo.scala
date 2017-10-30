@@ -12,14 +12,13 @@ class TeamRepo {
 
   val mongoClient: MongoClient = MongoClient("mongodb://localhost:32772/")
   val database: MongoDatabase = mongoClient.getDatabase("graphql")
-  val collection: MongoCollection[Document] = database.getCollection("factions")
+  val collection: MongoCollection[Document] = database.getCollection("teams")
 
   val data : List[Team] = List(
 
   )
   def getTeams () (implicit ec : ExecutionContext) : Future[List[Team]] = {
-    val data : List[Team] = List()
-    Future(data)
+   Future(List())
   }
 
 }

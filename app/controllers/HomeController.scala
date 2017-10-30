@@ -2,21 +2,11 @@ package controllers
 
 import javax.inject._
 
-import database.HeroRepo
-import models.SchemaDefinition
-import org.mongodb.scala.{Completed, Observer}
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
-import sangria.macros._
+import utils.GraphQLHelper
 
-import scala.concurrent.{ExecutionContext, Future}
-import sangria.marshalling.playJson._
-import sangria.ast.Document
-import sangria.parser.{QueryParser, SyntaxError}
-import sangria.schema.Schema
-import utils.{GraphQLHelper}
-
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 /**
@@ -33,12 +23,10 @@ class HomeController @Inject() (implicit ec : ExecutionContext) extends Controll
    * a path of `/`.
    */
   def index = Action {
-
-
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def ok = Action.async (parse.json) {
+  def ok: Action[JsValue] = Action.async (parse.json) {
 
      /*{
     "query" : "query Query($id : String!) t{hero (id : $id) {id, name, side, friends}}",
@@ -51,7 +39,5 @@ class HomeController @Inject() (implicit ec : ExecutionContext) extends Controll
         case Failure(error) => BadRequest(Json.obj("error" -> error.getMessage ))
       }
   }
-
-
 }
 

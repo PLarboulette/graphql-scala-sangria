@@ -1,6 +1,5 @@
 package database
 
-
 import models.Hero
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -8,41 +7,39 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by Pierre Larboulette on 02/03/2017.
   */
+
 class GlobalRepo {
 
-  val heroRepo = new HeroRepo()
-
   def getHeroes ()(implicit ec : ExecutionContext): Future[List[Hero]] = {
-    heroRepo.getHeroes()
+    HeroRepo.getHeroes()
   }
 
   def getHeroByID(id : String)(implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    heroRepo.getHeroByID(id)
+    HeroRepo.getHeroByID(id)
   }
 
   def getHeroByName(name : String)(implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    heroRepo.getHeroByName(name)
+    HeroRepo.getHeroByName(name)
   }
 
   def createHero (name : String, side : Int, friends : Option[Vector[String]]) (implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    heroRepo.createHero(name, side, friends)
+    HeroRepo.createHero(name, side, friends)
   }
 
   def createHeroes (test : Boolean) (implicit ec:ExecutionContext): Future[List[Hero]] = {
-    heroRepo.createHeroes(test)
+    HeroRepo.createHeroes(test)
   }
 
   def updateHeroName (id : String, name : String) (implicit ec:ExecutionContext): Future[Option[Hero]] = {
-    heroRepo.updateHeroName(id, name)
+    HeroRepo.updateHeroName(id, name)
   }
 
   def deleteHeroByID (id : String)  (implicit ec:ExecutionContext): Future[Boolean] = {
-    heroRepo.deleteHeroByID(id)
+    HeroRepo.deleteHeroByID(id)
   }
 
   def deleteHeroes (test : Boolean)(implicit ec:ExecutionContext): Future[Boolean] = {
-    heroRepo.deleteHeroes(test)
-    Future(false)
+    HeroRepo.deleteHeroes(test)
   }
 
 }
